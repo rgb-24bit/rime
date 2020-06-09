@@ -1,0 +1,256 @@
+#+TITLE:      Rime 输入法配置
+
+* 目录                                                    :TOC_4_gh:noexport:
+- [[#配置文件][配置文件]]
+- [[#配置语法][配置语法]]
+- [[#扩展词库][扩展词库]]
+- [[#注意事项][注意事项]]
+- [[#相关问题][相关问题]]
+- [[#参考配置][参考配置]]
+- [[#参考资料][参考资料]]
+
+* 配置文件
+  Rime 常用的配置文件大概可以分为几个部分：
+  + 预设输入方案 =[name].schema.yaml=
+  + 词典配置文件 =[name].dict.yaml=
+  + Rime 配置文件 =default.yaml=
+  + 发行版配置文件 =weasel/squirrel.yaml=
+  + 预设输入方案定制 =[name].custom.yaml=
+  + 自制输入方案与词典文件
+
+  通常，可以使用 =[name].custom.yaml= 对指定的配置进行修改，配置格式通常为：
+  #+begin_src yaml
+    patch:
+      a/b/c: ...
+  #+end_src
+  
+  效果似乎是覆盖如下配置项的值：
+  #+begin_src yaml
+    a:
+      b:
+        c: ...
+  #+end_src
+
+  修改配置后需要重新部署才可以生效，具体配置项可以参考默认配置文件。
+  
+  *TODO*:
+  + [ ] 用户词典
+  + [ ] 用户短语
+
+* 配置语法
+  + __include :: 
+    可写在配置源文件任一 YAML Map 节点下，用于在当前位置包含另一 YAML 节点的内容：
+    #+begin_src yaml
+      include_example_1:
+         __include: local/node
+
+      local:
+         node: contents to include
+    #+end_src
+
+    被引用的节点可以来自另一个配置文件。目标配置节点的路径以 =<filename>:/= 开始，可省略扩展名 .yaml：
+    #+begin_src yaml
+      include_example_2:
+         __include: config:/external/node
+
+      include_example_3:
+         __include: config.yaml:/external/node
+    #+end_src
+
+    包含整个文件，可指定路径为目标配置文件的根节点：
+    #+begin_src yaml
+      include_example_4 :
+         __include : config.yaml:/
+    #+end_src
+
+    包含另一个 YAML 节点后，源文件中 =__include:= 指令所在 map 除编译指令外的其他数据与被包含的 map 合并：
+    #+begin_src yaml
+      include_example_5:
+         __include: some_map 
+        occupation: journalist  # keep
+        simplicity: very        # override value for included key
+
+      some_map:
+        simplicity: somewhat
+        naivety: sometimes
+    #+end_src
+     
+    包含 YAML 列表，则指令所在 map 节点替换为所引用的 YAML 列表。该 map 节点不应包含任何编译指令以外的 key-value，因为不相容于 YAML 列表类型。
+
+    也不能直接在该节点下追加列表项，因为 YAML 语法不允许混合 map 与 list。在包含列表后追加、修改列表项，
+    必须使用下文介绍的 =__append:= 或 =__patch:= 指令。
+
+  + __patch :: 
+    用于修改某一相对路径下的配置节点，而非当前节点的整体。基本语法为：
+    #+begin_src yaml
+      __patch:
+        key/A: value A 
+        key/B: value B
+    #+end_src
+
+    目标节点路径的写法为将各级 map 的 key 用 / 分隔。因此 key 如果包含 / 字符，则不能作为节点路径的一部分。
+     
+    可在节点路径末尾添加 =/+= 操作符，表示合并 list 或 map 节点，或者添加 ~/=~ 表示用指定的值替换目标节点原有的值，
+    若未指定操作符，指令 =__patch= 的默认操作为替换：
+    #+begin_src yaml
+      patch_example_1:
+        sibling: old value 
+        append_to_list:
+          - existing item 
+        merge_with_map:
+           key: value 
+        replace_list:
+          - item 1 
+          - item 2 
+        replace_map:
+          a: value 
+          b: value 
+        __patch:
+          sibling: new value 
+          append_to_list/+:
+            - appended item 
+          merge_with_map/+:
+            key: new value 
+            new_key: value 
+          replace_list/=:
+            - only item 
+          replace_map/=:
+            only_key: value
+    #+end_src
+     
+    =__patch= 指令的另一种主要用法是引用另一个节点中的补丁内容，并作用于指令所在节点：
+    #+begin_src yaml
+      patch_example_3:
+        __patch: changes 
+        some_list:
+          - youngster 
+          - elder 
+        some_map:
+          simplicity: somewhat 
+          naivety: sometimes
+
+      changes:
+        some_list/+:
+          - someone else 
+        some_map/simplicity: too much
+    #+end_src
+
+    YAML 语法不允许 map 有重复的 key。如果要引用不同位置的多项补丁，可以为 =__patch= 指定一个列表，其中每项通过节点引用定义一组补丁：
+    #+begin_src yaml
+      patch_example_4:
+        __include: base_config 
+        __patch:
+          - company_standard 
+          - team_convention 
+          - personal_preference
+    #+end_src
+
+    补丁指令中，目标节点路径由各级节点的 =key= 组成。若某一节点为 list 类型，可以 =@<下标>= 形式指定列表项。下标从 =0= 开始计数。
+    无论列表长度，末位列表元素可表示为 =@last=
+    #+begin_src yaml
+      patch_list_example_1:
+        some_list/@0/simplicity: very 
+        some_list/@last/naivety: always
+    #+end_src
+
+    在指定元素之前、之后插入列表元素，用 =@before <下标>=, =@after <下标>=. =@after last= 可简写为 =@next= 的形式：
+    #+begin_src yaml
+      patch_list_example_2:
+        'some_list/@before 0/youthfulness': too much 
+        'some_list/@after last/velocity': greater than westerners 
+        some_list/@next/questions: no good
+    #+end_src
+
+    若包含或补丁指令的目标是以 =?= 结尾的节点路径，则当该路径对应的节点（或所属外部配置文件）不存在时，不产生编译错误：
+    #+begin_src yaml
+      __patch: default.custom:/patch?
+
+      nice_to_have:
+        __include: optional_config?
+    #+end_src
+
+  + __append & __merge :: 
+    追加指令 =__append= 将其下的列表项追加到该指令所在的节点。合并指令 =__merge= 将其下的 map 合并到该指令所在的节点。
+    这两条指令只能用在 =__include= 指令所在节点及其子节点。
+    #+begin_src yaml
+      append_merge_example_1:
+        __include: starcraft 
+        __merge:
+          made_by: blizzard entertainment 
+          races:
+            __append:
+              - protoss 
+              - zerg
+
+      starcraft:
+        first_release: 1998 
+        races:
+          - terrans
+    #+end_src
+     
+  Rime 会在配置文件（不是 =.custom= 文件）的根节点中自动添加 =__patch= 指令：
+  #+begin_src yaml
+    # <config>.yaml 或 <config>.schema.yaml 的根节点
+    __patch: <config>.custom:/patch?
+  #+end_src
+
+  补丁文件：
+  #+begin_src yaml
+    # <config>.custom.yaml 
+    patch:
+       key: value
+  #+end_src
+   
+  等价于：
+  #+begin_src yaml
+    # <config>.yaml 或 <config>.schema.yaml 的根节点
+    __patch:
+       key: value
+  #+end_src
+   
+  =<component>/import_preset: <config>= 语法翻译为：
+  #+begin_src yaml
+    <component>:
+       __include: <config>:/<component> 
+      # 以下为输入方案覆盖定义的内容
+  #+end_src
+
+  参考：
+  + [[https://github.com/rime/home/wiki/Configuration][Configuration · rime/home Wiki]]
+
+* 扩展词库
+  + 词库导入
+    + [[https://github.com/studyzy/imewlconverter][studyzy/imewlconverter: 一款开源免费的输入法词库转换程序]]
+    + [[https://www.jianshu.com/p/300bbe1602d4][Rime 导入搜狗词库 - 简书]]
+  + 扩展词库
+    + [[https://github.com/rime-aca/dictionaries][rime-aca/dictionaries: Rime 詞庫]] - 这个词库有一段时间没有更新了，可以选择找一个现成配置中的词库
+    + [[https://github.com/xiaoTaoist/rime-dict][xiaoTaoist/rime-dict: RIME 输入法 增强词库]]
+    + [[https://pinyin.sogou.com/dict/detail/index/11640][搜狗标准词库_搜狗输入法词库]]
+
+* 注意事项
+  + 词典无法多级导入，只有定义在 =translator/dictionary= 中的词典的导入语句会生效，解决了循环导入问题？
+
+* 相关问题
+  + 简拼不显示的问题 - [[https://github.com/rime/librime/issues/72][dict 加入一个词条，就会使其它词条无法显示 · Issue #72 · rime/librime]]
+   
+    可以通过拼写运算 =xform/^([b-df-np-z])$/$1_/= 解决
+
+* 参考配置
+  + [[https://github.com/scomper/Rime][scomper/Rime: 鼠须管配置]] - 目前主要参考的配置来源
+  + [[https://github.com/hotoo/rime][hotoo/rime: 闲耘的 rime 输入法配置]] - 配置中有一个很好看的主题
+
+* 参考资料
+  + 官方文档
+    + [[https://github.com/rime/home/wiki/Configuration][Rime 配置文件语法]]
+    + [[https://github.com/rime/home/wiki/CustomizationGuide][Rime 定制指南]]
+    + [[https://github.com/rime/home/wiki/RimeWithTheDesign][Rime 设计架构]]
+    + [[https://github.com/rime/home/wiki/SharedData][Rime 共享文件夹]]
+    + [[https://github.com/rime/home/wiki/UserData][Rime 用户文件夹]]
+    + [[https://github.com/rime/home/wiki/UserGuide][Rime 说明书]]
+    + [[https://github.com/rime/home/wiki/SpellingAlgebra][Rime 拼写运算]]
+  + 博客
+    + [[https://jdhao.github.io/2019/02/18/rime_configuration_intro/][最新版 Rime 输入法使用 - jdhao's blog]]
+    + [[https://scomper.me/gtd/-shu-xu-guan-de-diao-jiao-bi-ji#toc_6][「鼠须管」的调教笔记]]
+  + 其他
+    + [[https://github.com/LEOYoon-Tsaw/Rime_collections/blob/master/Rime_description.md][Schema.yaml 详解]]
+
