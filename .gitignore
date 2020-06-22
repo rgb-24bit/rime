@@ -31,3 +31,4 @@ build
 *.userdb
 sync
 installation.yaml
+*.userdb.old
