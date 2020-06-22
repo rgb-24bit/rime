@@ -4,6 +4,10 @@
 
 patch:
   menu/page_size: 6
+  switcher/hotkeys:
+    - Control+grave
+    # - Conflict with emacs shortcut ↓↓↓
+    # - F4
   schema_list:
     - schema: luna_pinyin_simp        # 朙月拼音 简化字
     # - schema: luna_pinyin           # 朙月拼音
