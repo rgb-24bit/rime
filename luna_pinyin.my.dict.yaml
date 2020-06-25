@@ -5,6 +5,8 @@ version: "2020.06.04"
 sort: by_weight
 use_preset_vocabulary: true
 import_tables:
+  - zhwiki
+  - moegirl
   - luna_pinyin
   - luna_pinyin.extended
   - luna_pinyin.kaomoji
