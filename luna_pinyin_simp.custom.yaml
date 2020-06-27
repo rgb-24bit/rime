@@ -130,27 +130,27 @@ patch:
     #- derive/^f([ao])/hu$1/            # fa => hua, ...
 
     # 韻母部份
-    #- derive/^([bpmf])eng$/$1ong/      # meng = mong, ...
-    - derive/([ei])n$/$1ng/            # en => eng, in => ing
-    - derive/([ei])ng$/$1n/            # eng => en, ing => in
+    # - derive/^([bpmf])eng$/$1ong/      # meng = mong, ...
+    # - derive/([ei])n$/$1ng/            # en => eng, in => ing
+    # - derive/([ei])ng$/$1n/            # eng => en, ing => in
 
     # 樣例足夠了，其他請自己總結……
 
     # 模糊音定義先於簡拼定義，方可令簡拼支持以上模糊音
-    - abbrev/^([a-z]).+$/$1/           # 簡拼（首字母）
-    - abbrev/^([zcs]h).+$/$1/          # 簡拼（zh, ch, sh）
+    # - abbrev/^([a-z]).+$/$1/           # 簡拼（首字母）
+    # - abbrev/^([zcs]h).+$/$1/          # 簡拼（zh, ch, sh）
 
     # 以下是一組容錯拼寫，《漢語拼音》方案以前者爲正
-    - derive/^([nl])ve$/$1ue/          # nve = nue, lve = lue
-    - derive/^([jqxy])u/$1v/           # ju = jv,
-    - derive/un$/uen/                  # gun = guen,
-    - derive/ui$/uei/                  # gui = guei,
-    - derive/iu$/iou/                  # jiu = jiou,
+    # - derive/^([nl])ve$/$1ue/          # nve = nue, lve = lue
+    # - derive/^([jqxy])u/$1v/           # ju = jv,
+    # - derive/un$/uen/                  # gun = guen,
+    # - derive/ui$/uei/                  # gui = guei,
+    # - derive/iu$/iou/                  # jiu = jiou,
 
     # 自動糾正一些常見的按鍵錯誤
-    - derive/([aeiou])ng$/$1gn/        # dagn => dang 
-    - derive/([dtngkhrzcs])o(u|ng)$/$1o/  # zho => zhong|zhou
-    - derive/ong$/on/                  # zhonguo => zhong guo
-    - derive/ao$/oa/                   # hoa => hao
-    - derive/ua$/au/                   # shau => shua
-    - derive/([iu])a(o|ng?)$/a$1$2/    # tain => tian
+    # - derive/([aeiou])ng$/$1gn/        # dagn => dang 
+    # - derive/([dtngkhrzcs])o(u|ng)$/$1o/  # zho => zhong|zhou
+    # - derive/ong$/on/                  # zhonguo => zhong guo
+    # - derive/ao$/oa/                   # hoa => hao
+    # - derive/ua$/au/                   # shau => shua
+    # - derive/([iu])a(o|ng?)$/a$1$2/    # tain => tian
