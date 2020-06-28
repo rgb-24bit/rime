@@ -31,4 +31,5 @@ build
 *.userdb
 sync
 installation.yaml
+user.yaml
 *.userdb.old
