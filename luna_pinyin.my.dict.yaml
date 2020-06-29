@@ -12,5 +12,5 @@ import_tables:
   - luna_pinyin.kaomoji
   - luna_pinyin.poetry
   - luna_pinyin.cn_en
-  - luna_pinyin.sgmain
+  # - luna_pinyin.sgmain
 ...
