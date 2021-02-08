@@ -9,7 +9,12 @@ patch:
       name: "天依 / Tianyi"
       author: "rgb-24bit <rgb-24bit@foxmail.com>"
 
+      inline_preedit: false                             # true: 单行显示，false: 双行显示
+      horizontal: false                                 # 竖直候选
       back_color: 0xFFFFFF                              # 背景色
+      corner_radius: 1                                  # 边框圆角
+      border_height: 2                                  # 边框高度
+      border_width: 2                                   # 边框宽度
       border_color: 0xFFCC66                            # 边框色
       text_color: 0x9E9E9E                              # 拼音行文字颜色
       hilited_text_color: 0x9E9E9E                      # 拼音行编码颜色
