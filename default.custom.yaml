@@ -3,7 +3,7 @@
 # Rime 输入法本体设置
 
 patch:
-  menu/page_size: 6
+  menu/page_size: 5
   switcher/hotkeys:
     - Control+grave
     # - Conflict with emacs shortcut ↓↓↓
