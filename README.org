@@ -1,3 +1,4 @@
+
 #+TITLE:      Rime 输入法配置
 
 * 目录                                                    :TOC_4_gh:noexport:
@@ -243,9 +244,9 @@
     + [[https://github.com/studyzy/imewlconverter][studyzy/imewlconverter: 一款开源免费的输入法词库转换程序]]
     + [[https://www.jianshu.com/p/300bbe1602d4][Rime 导入搜狗词库 - 简书]]
   + 扩展词库
-    + [[https://github.com/rime-aca/dictionaries][rime-aca/dictionaries: Rime 詞庫]] - 这个词库有一段时间没有更新了，可以选择找一个现成配置中的词库
-    + [[https://github.com/xiaoTaoist/rime-dict][xiaoTaoist/rime-dict: RIME 输入法 增强词库]]
+    + [[https://pinyin.sogou.com/dict/detail/index/15117][计算机词汇大全_搜狗输入法词库]]
     + [[https://pinyin.sogou.com/dict/detail/index/11640][搜狗标准词库_搜狗输入法词库]]
+    + [[https://pinyin.sogou.com/dict/detail/index/4][网络流行新词_搜狗输入法词库]]
     + [[https://github.com/outloudvi/fcitx5-pinyin-moegirl][萌娘百科扩展词库]]
     + [[https://github.com/felixonmars/fcitx5-pinyin-zhwiki][中文维基扩展词库]]
 

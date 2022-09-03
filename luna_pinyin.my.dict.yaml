@@ -6,11 +6,11 @@ sort: by_weight
 use_preset_vocabulary: true
 import_tables:
   - luna_pinyin
-  - luna_pinyin.zhwiki
+  - luna_pinyin.sogou_std
+  - luna_pinyin.sogou_network
+  - luna_pinyin.sogou_cs
   - luna_pinyin.moegirl
-  - luna_pinyin.extended
+  - luna_pinyin.zhwiki
   - luna_pinyin.kaomoji
   - luna_pinyin.poetry
-  # - luna_pinyin.cn_en
-  # - luna_pinyin.sgmain
 ...
