@@ -27,8 +27,8 @@ patch:
     option_name: show_emoji
     tags: abc
 
-  # # https://github.com/rime/librime/issues/72
-  # "speller/algebra/@before 0": xform/^([b-df-hj-np-tv-z])$/$1_/
+  # https://github.com/rime/librime/issues/72
+  "speller/algebra/@before 0": xform/^([b-df-hj-np-tv-z])$/$1_/
 
   # # 加载 easy_en 依赖
   # "schema/dependencies/@1": easy_en
